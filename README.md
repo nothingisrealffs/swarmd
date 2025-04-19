@@ -24,7 +24,7 @@ This application provides:
 
 ## 📈 Architecture Flow
 
-![Docker Swarm Manager Workflow](./A_flowchart_titled_"Docker_Swarm_Manager_Workflow".png)
+![Docker Swarm Manager Workflow](./workflow.png)
 
 ---
 
