@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  swarm-manager:
+    build: .
+    container_name: swarm-manager
+    privileged: true  # Required for Docker-in-Docker and GlusterFS
+    environment:
+      - ENABLE_TLS=${ENABLE_TLS:-false}
+      - TOKEN_SERVICE_PORT=8000
+      - REGISTRY_HOST=127.0.0.1
+      - REGISTRY_PORT=5000
+      - GLUSTER_VOLUME_NAME=docker-volume
+      - GLUSTER_BRICK_PATH=/gluster/bricks
+      - MONITOR_PORT=8001
+    volumes:
+      - ./certs:/certs:ro
+      - ./tokens:/tokens
+      - ./registry-data:/var/lib/registry
+      - ./gluster-data:/gluster
+      - ./data:/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro  # Access host Docker socket for monitoring
+    ports:
+      - "2377:2377"  # Swarm management
+      - "7946:7946"  # Container network discovery
+      - "4789:4789"  # Container overlay network
+      - "8000:8000"  # Token service API
+      - "8001:8001"  # Container monitoring API
+      - "5000:5000"  # Docker registry
+      - "24007:24007" # GlusterFS Daemon
+      - "24008:24008" # GlusterFS Management
+      - "49152-49251:49152-49251" # GlusterFS Brick ports
+    restart: unless-stopped
